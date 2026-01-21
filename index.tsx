@@ -289,24 +289,34 @@ const CreativeAuthPage = ({ mode, onSwitch, onAuth }: { mode: 'login' | 'signup'
     setError(null);
     setLoading(true);
 
-    // Mock verification with case-insensitive email and whitespace trimming
+    // Mock verification with custom credentials support
     setTimeout(() => {
       setLoading(false);
+      const normalizedEmail = email.trim().toLowerCase();
+      const normalizedPassword = password.trim();
+
       if (mode === 'signup') {
+        // For signup, save credentials to localStorage and switch to login
+        if (!normalizedEmail || !normalizedPassword) {
+          setError("Please enter both email and password");
+          return;
+        }
+        localStorage.setItem('farmwise_email', normalizedEmail);
+        localStorage.setItem('farmwise_password', normalizedPassword);
         onSwitch('login');
-        alert("Account created! Please sign in with user@farm.com / password123");
+        alert(`Account created! Your credentials:\nEmail: ${normalizedEmail}\nPassword: ${normalizedPassword}`);
+        setEmail('');
+        setPassword('');
       } else {
-        const correctEmail = 'user@farm.com';
-        const correctPassword = 'password123';
+        // For login, check against saved credentials or default credentials
+        const savedEmail = localStorage.getItem('farmwise_email') || 'user@farm.com';
+        const savedPassword = localStorage.getItem('farmwise_password') || 'password123';
 
-        const normalizedEmail = email.trim().toLowerCase();
-        const normalizedPassword = password.trim();
-
-        if (normalizedEmail === correctEmail && normalizedPassword === correctPassword) {
+        if (normalizedEmail === savedEmail && normalizedPassword === savedPassword) {
           console.log("Auth success, calling onAuth callback...");
           onAuth();
         } else {
-          setError("Incorrect email or password. Use: user@farm.com / password123");
+          setError(`Incorrect email or password. Use: ${savedEmail} / ${savedPassword}`);
         }
       }
     }, 1000);

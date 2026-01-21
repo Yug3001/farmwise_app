@@ -2,15 +2,15 @@ import React, { useState, useRef, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { GoogleGenAI, Type } from "@google/genai";
 import { jsPDF } from "jspdf";
-import {
-  Sprout,
-  Droplets,
-  Sun,
+import { 
+  Sprout, 
+  Droplets, 
+  Sun, 
   Moon,
-  Wind,
-  Camera,
-  Search,
-  CheckCircle2,
+  Wind, 
+  Camera, 
+  Search, 
+  CheckCircle2, 
   LayoutDashboard,
   Bug,
   Loader2,
@@ -93,7 +93,7 @@ type AuthState = 'landing' | 'login' | 'signup' | 'authenticated';
 // --- Custom Components ---
 
 const GlassCard = ({ children, className = "", onClick }: { children?: React.ReactNode; className?: string; onClick?: () => void; key?: React.Key }) => (
-  <div
+  <div 
     onClick={onClick}
     className={`glass rounded-[32px] p-6 transition-all duration-500 hover:shadow-2xl dark:shadow-black/40 ${className}`}
   >
@@ -101,16 +101,16 @@ const GlassCard = ({ children, className = "", onClick }: { children?: React.Rea
   </div>
 );
 
-const Button = ({
-  children,
-  onClick,
-  disabled,
-  variant = 'primary',
-  className = ""
-}: {
-  children?: React.ReactNode;
-  onClick?: () => void;
-  disabled?: boolean;
+const Button = ({ 
+  children, 
+  onClick, 
+  disabled, 
+  variant = 'primary', 
+  className = "" 
+}: { 
+  children?: React.ReactNode; 
+  onClick?: () => void; 
+  disabled?: boolean; 
   variant?: 'primary' | 'secondary' | 'outline' | 'danger' | 'ghost';
   className?: string;
   key?: React.Key;
@@ -122,11 +122,11 @@ const Button = ({
     danger: "bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/40",
     ghost: "bg-transparent text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
   };
-
+  
   return (
-    <button
-      onClick={onClick}
-      disabled={disabled}
+    <button 
+      onClick={onClick} 
+      disabled={disabled} 
       className={`px-6 py-4 rounded-2xl font-bold transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 ${variants[variant]} ${className}`}
     >
       {children}
@@ -189,7 +189,7 @@ const LandingPage = ({ onStart }: { onStart: () => void }) => {
           </div>
           <span className="text-xl font-black text-slate-800 dark:text-white tracking-tighter">FarmWise</span>
         </div>
-        <button
+        <button 
           onClick={onStart}
           className="px-6 py-2.5 rounded-full bg-white dark:bg-white/10 text-slate-800 dark:text-white font-bold text-sm shadow-sm hover:shadow-xl transition-all border border-transparent hover:border-green-200"
         >
@@ -230,10 +230,10 @@ const LandingPage = ({ onStart }: { onStart: () => void }) => {
           <div className="absolute inset-0 bg-gradient-to-tr from-[#74C69D]/20 to-transparent blur-3xl rounded-full" />
           <div className="relative glass p-4 rounded-[48px] border-4 border-white/50 dark:border-white/5">
             <div className="bg-[#1B4332] dark:bg-[#081C15] rounded-[40px] aspect-[4/5] overflow-hidden relative group">
-              <img
-                src="https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&q=90&w=1600"
+              <img 
+                src="https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&q=90&w=1600" 
                 className="w-full h-full object-cover opacity-90 group-hover:scale-110 transition-transform duration-1000"
-                alt="Farming Intelligence"
+                alt="Farming Intelligence" 
               />
               <div className="absolute bottom-8 left-8 right-8">
                 <GlassCard className="!p-6 bg-white/20 backdrop-blur-2xl border-white/20">
@@ -279,10 +279,9 @@ const LandingPage = ({ onStart }: { onStart: () => void }) => {
 const CreativeAuthPage = ({ mode, onSwitch, onAuth }: { mode: 'login' | 'signup', onSwitch: (m: 'login' | 'signup') => void, onAuth: () => void }) => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [focusField, setFocusField] = useState<'none' | 'email' | 'password' | 'name'>('none');
+  const [focusField, setFocusField] = useState<'none' | 'email' | 'password'>('none');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -290,66 +289,24 @@ const CreativeAuthPage = ({ mode, onSwitch, onAuth }: { mode: 'login' | 'signup'
     setError(null);
     setLoading(true);
 
+    // Mock verification with case-insensitive email and whitespace trimming
     setTimeout(() => {
       setLoading(false);
       if (mode === 'signup') {
-        // Store new user credentials
-        const normalizedEmail = email.trim().toLowerCase();
-        const normalizedPassword = password.trim();
-        const userName = name.trim();
-
-        if (!userName || !normalizedEmail || !normalizedPassword) {
-          setError("Please fill in all fields");
-          return;
-        }
-
-        // Get existing users or initialize empty array
-        const existingUsers = JSON.parse(localStorage.getItem('farmwise_users') || '[]');
-
-        // Check if user already exists
-        if (existingUsers.some((u: any) => u.email === normalizedEmail)) {
-          setError("An account with this email already exists");
-          return;
-        }
-
-        // Add new user
-        existingUsers.push({
-          name: userName,
-          email: normalizedEmail,
-          password: normalizedPassword
-        });
-
-        localStorage.setItem('farmwise_users', JSON.stringify(existingUsers));
-
-        // Clear form
-        setName('');
-        setEmail('');
-        setPassword('');
-
         onSwitch('login');
-        alert(`Account created successfully! Please sign in with your credentials.`);
+        alert("Account created! Please sign in with user@farm.com / password123");
       } else {
-        // Login - check against stored users
+        const correctEmail = 'user@farm.com';
+        const correctPassword = 'password123';
+
         const normalizedEmail = email.trim().toLowerCase();
         const normalizedPassword = password.trim();
 
-        console.log("Login attempt - Email:", normalizedEmail);
-
-        // Get stored users
-        const existingUsers = JSON.parse(localStorage.getItem('farmwise_users') || '[]');
-
-        // Find matching user
-        const user = existingUsers.find((u: any) =>
-          u.email === normalizedEmail && u.password === normalizedPassword
-        );
-
-        if (user) {
+        if (normalizedEmail === correctEmail && normalizedPassword === correctPassword) {
           console.log("Auth success, calling onAuth callback...");
-          localStorage.setItem('farmwise_current_user', JSON.stringify(user));
           onAuth();
         } else {
-          console.log("Auth failed - credentials do not match");
-          setError("Incorrect email or password. Please check your credentials or sign up.");
+          setError("Incorrect email or password. Use: user@farm.com / password123");
         }
       }
     }, 1000);
@@ -368,31 +325,31 @@ const CreativeAuthPage = ({ mode, onSwitch, onAuth }: { mode: 'login' | 'signup'
           <div className="absolute top-10 left-10 w-8 h-8 rounded-full bg-orange-400 opacity-80 animate-bounce" />
           <div className="absolute bottom-20 right-10 w-12 h-12 bg-purple-500 opacity-60 rounded-xl rotate-45 animate-pulse" />
           <div className="absolute top-1/4 right-20 w-6 h-6 bg-yellow-400 opacity-70 rounded-full animate-float" />
-
+          
           <div className="relative flex items-end gap-1 mb-20 md:mb-40 scale-75 md:scale-100 transition-all duration-700">
             <div className="w-48 h-24 bg-[#FF7D45] rounded-t-full relative z-10 transition-all duration-500 hover:scale-105">
-              <div className="absolute top-10 left-12 flex gap-4 transition-transform duration-300" style={{ transform: getEyeTranslate() }}>
-                <div className="w-4 h-4 bg-white rounded-full flex items-center justify-center"><div className="w-2 h-2 bg-black rounded-full" /></div>
-                <div className="w-4 h-4 bg-white rounded-full flex items-center justify-center"><div className="w-2 h-2 bg-black rounded-full" /></div>
-              </div>
+               <div className="absolute top-10 left-12 flex gap-4 transition-transform duration-300" style={{ transform: getEyeTranslate() }}>
+                  <div className="w-4 h-4 bg-white rounded-full flex items-center justify-center"><div className="w-2 h-2 bg-black rounded-full" /></div>
+                  <div className="w-4 h-4 bg-white rounded-full flex items-center justify-center"><div className="w-2 h-2 bg-black rounded-full" /></div>
+               </div>
             </div>
             <div className="w-24 h-56 bg-[#7C3AED] rounded-3xl relative z-0 -ml-12 transition-all duration-700 ease-in-out" style={{ transform: focusField === 'password' ? 'translateY(40px)' : 'translateY(0)' }}>
-              <div className={`absolute top-12 left-6 flex flex-col gap-1 transition-opacity duration-300 ${focusField === 'password' ? 'opacity-20' : 'opacity-100'}`}>
-                <div className="flex gap-2" style={{ transform: getEyeTranslate() }}>
-                  <div className="w-1.5 h-1.5 bg-black rounded-full" /><div className="w-1.5 h-1.5 bg-black rounded-full" />
-                </div>
-              </div>
+               <div className={`absolute top-12 left-6 flex flex-col gap-1 transition-opacity duration-300 ${focusField === 'password' ? 'opacity-20' : 'opacity-100'}`}>
+                  <div className="flex gap-2" style={{ transform: getEyeTranslate() }}>
+                    <div className="w-1.5 h-1.5 bg-black rounded-full" /><div className="w-1.5 h-1.5 bg-black rounded-full" />
+                  </div>
+               </div>
             </div>
             <div className="w-32 h-32 bg-black rounded-3xl relative z-20 -ml-10 flex items-center justify-center transition-all duration-500" style={{ transform: focusField === 'password' ? 'scale(0.85) rotate(-12deg)' : 'scale(1)' }}>
-              <div className="flex gap-5 mb-4 transition-transform duration-300" style={{ transform: getEyeTranslate() }}>
-                <div className={`transition-all duration-500 bg-white ${focusField === 'password' ? 'w-5 h-0.5 rounded-none' : 'w-3 h-3 rounded-full'}`} />
-                <div className={`transition-all duration-500 bg-white ${focusField === 'password' ? 'w-5 h-0.5 rounded-none' : 'w-3 h-3 rounded-full'}`} />
-              </div>
+               <div className="flex gap-5 mb-4 transition-transform duration-300" style={{ transform: getEyeTranslate() }}>
+                  <div className={`transition-all duration-500 bg-white ${focusField === 'password' ? 'w-5 h-0.5 rounded-none' : 'w-3 h-3 rounded-full'}`} />
+                  <div className={`transition-all duration-500 bg-white ${focusField === 'password' ? 'w-5 h-0.5 rounded-none' : 'w-3 h-3 rounded-full'}`} />
+               </div>
             </div>
             <div className="w-20 h-40 bg-[#FCD34D] rounded-full relative z-10 -ml-8 transition-all duration-500" style={{ height: focusField === 'email' ? '180px' : '160px' }}>
-              <div className="absolute top-8 left-1/2 -translate-x-1/2 flex gap-1.5 transition-transform duration-300" style={{ transform: getEyeTranslate() }}>
-                <div className="w-1.5 h-1.5 bg-black rounded-full" /><div className="w-1.5 h-1.5 bg-black rounded-full" />
-              </div>
+               <div className="absolute top-8 left-1/2 -translate-x-1/2 flex gap-1.5 transition-transform duration-300" style={{ transform: getEyeTranslate() }}>
+                  <div className="w-1.5 h-1.5 bg-black rounded-full" /><div className="w-1.5 h-1.5 bg-black rounded-full" />
+               </div>
             </div>
           </div>
         </div>
@@ -401,7 +358,7 @@ const CreativeAuthPage = ({ mode, onSwitch, onAuth }: { mode: 'login' | 'signup'
           <div className="w-full max-w-md animate-scale-in">
             <div className="mb-8 text-left">
               <div className="w-10 h-10 mb-6 text-[#7C3AED]">
-                <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 0L24.5 15.5L40 20L24.5 24.5L20 40L15.5 24.5L0 20L15.5 15.5L20 0Z" fill="currentColor" /></svg>
+                 <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 0L24.5 15.5L40 20L24.5 24.5L20 40L15.5 24.5L0 20L15.5 15.5L20 0Z" fill="currentColor" /></svg>
               </div>
               <h1 className="text-4xl font-black text-[#1A1A1A] dark:text-white mb-2 tracking-tight">Welcome back!</h1>
               <p className="text-slate-400 dark:text-slate-500 font-medium">Please enter your farming credentials</p>
@@ -417,7 +374,7 @@ const CreativeAuthPage = ({ mode, onSwitch, onAuth }: { mode: 'login' | 'signup'
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
                 <label className="text-sm font-bold text-[#1A1A1A] dark:text-slate-300 ml-1">Email</label>
-                <input
+                <input 
                   type="email" required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -431,7 +388,7 @@ const CreativeAuthPage = ({ mode, onSwitch, onAuth }: { mode: 'login' | 'signup'
               <div className="space-y-2">
                 <label className="text-sm font-bold text-[#1A1A1A] dark:text-slate-300 ml-1">Password</label>
                 <div className="relative">
-                  <input
+                  <input 
                     type={showPassword ? "text" : "password"} required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -474,15 +431,9 @@ const CreativeAuthPage = ({ mode, onSwitch, onAuth }: { mode: 'login' | 'signup'
         </div>
         <GlassCard className="!p-10 shadow-2xl">
           <form onSubmit={handleSubmit} className="space-y-6">
-            {error && (
-              <div className="p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-2xl flex items-center gap-3 animate-slide-up border border-red-100 dark:border-red-900/30">
-                <AlertCircle size={20} />
-                <p className="text-sm font-bold">{error}</p>
-              </div>
-            )}
-            <div className="space-y-2"><label className="text-xs font-black uppercase text-slate-400">Full Name</label><div className="relative"><User className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" size={20} /><input type="text" required value={name} onChange={(e) => setName(e.target.value)} onFocus={() => setFocusField('name')} onBlur={() => setFocusField('none')} placeholder="John Farmer" className="w-full h-14 bg-white dark:bg-slate-900/50 border-2 border-slate-100 dark:border-white/10 rounded-2xl pl-14 font-bold outline-none focus:border-[#1B4332]" /></div></div>
-            <div className="space-y-2"><label className="text-xs font-black uppercase text-slate-400">Email Address</label><div className="relative"><Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" size={20} /><input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} onFocus={() => setFocusField('email')} onBlur={() => setFocusField('none')} placeholder="name@farm.com" className="w-full h-14 bg-white dark:bg-slate-900/50 border-2 border-slate-100 dark:border-white/10 rounded-2xl pl-14 font-bold outline-none focus:border-[#1B4332]" /></div></div>
-            <div className="space-y-2"><label className="text-xs font-black uppercase text-slate-400">Password</label><div className="relative"><Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" size={20} /><input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} onFocus={() => setFocusField('password')} onBlur={() => setFocusField('none')} placeholder="••••••••" className="w-full h-14 bg-white dark:bg-slate-900/50 border-2 border-slate-100 dark:border-white/10 rounded-2xl pl-14 font-bold outline-none focus:border-[#1B4332]" /></div></div>
+            <div className="space-y-2"><label className="text-xs font-black uppercase text-slate-400">Full Name</label><div className="relative"><User className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" size={20} /><input type="text" required placeholder="John Farmer" className="w-full h-14 bg-white dark:bg-slate-900/50 border-2 border-slate-100 dark:border-white/10 rounded-2xl pl-14 font-bold outline-none focus:border-[#1B4332]" /></div></div>
+            <div className="space-y-2"><label className="text-xs font-black uppercase text-slate-400">Email Address</label><div className="relative"><Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" size={20} /><input type="email" required placeholder="name@farm.com" className="w-full h-14 bg-white dark:bg-slate-900/50 border-2 border-slate-100 dark:border-white/10 rounded-2xl pl-14 font-bold outline-none focus:border-[#1B4332]" /></div></div>
+            <div className="space-y-2"><label className="text-xs font-black uppercase text-slate-400">Password</label><div className="relative"><Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" size={20} /><input type="password" required placeholder="••••••••" className="w-full h-14 bg-white dark:bg-slate-900/50 border-2 border-slate-100 dark:border-white/10 rounded-2xl pl-14 font-bold outline-none focus:border-[#1B4332]" /></div></div>
             <Button disabled={loading} className="w-full h-16">{loading ? <Loader2 className="animate-spin" /> : 'Create Account'}</Button>
           </form>
           <div className="mt-8 text-center"><button onClick={() => onSwitch('login')} className="text-sm font-bold text-slate-400 hover:text-[#1B4332]">Already have an account? Sign In</button></div>
@@ -508,7 +459,7 @@ const App = () => {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [reminders, setReminders] = useState<Reminder[]>([]);
   const [isDarkMode, setIsDarkMode] = useState(false);
-
+  
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [userInput, setUserInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -523,7 +474,7 @@ const App = () => {
 
     const savedHistory = localStorage.getItem('farmwise_history');
     if (savedHistory) setHistory(JSON.parse(savedHistory));
-
+    
     const savedReminders = localStorage.getItem('farmwise_reminders');
     if (savedReminders) setReminders(JSON.parse(savedReminders));
 
@@ -697,7 +648,7 @@ const App = () => {
     try {
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const base64Data = image.split(',')[1];
-      const prompt = type === 'soil'
+      const prompt = type === 'soil' 
         ? "Analyze this soil. Provide JSON: healthScore, quality, nutrients (array of label/value), recommendations (array of string), description."
         : "Analyze this plant. Provide JSON: healthScore, quality, nutrients (array of label/value), recommendations (array of string), description.";
       const response = await ai.models.generateContent({
@@ -813,7 +764,7 @@ const App = () => {
   };
 
   if (authState === 'landing') return <LandingPage onStart={() => setAuthState('login')} />;
-  if (authState === 'login' || authState === 'signup') return <CreativeAuthPage mode={authState as 'login' | 'signup'} onSwitch={(m) => setAuthState(m)} onAuth={handleAuth} />;
+  if (authState === 'login' || authState === 'signup') return <CreativeAuthPage mode={authState} onSwitch={(m) => setAuthState(m)} onAuth={handleAuth} />;
 
   return (
     <div className={`min-h-screen pb-24 md:pb-0 bg-white dark:bg-[#081C15] text-slate-900 dark:text-slate-100 transition-colors`}>
@@ -834,6 +785,30 @@ const App = () => {
           </div>
         </div>
       </header>
+
+      {/* Mobile Bottom Navigation */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 glass border-t px-4 py-3 flex justify-around items-center">
+        {[
+          { name: 'Soil', icon: Droplets },
+          { name: 'Crop', icon: Bug },
+          { name: 'Planner', icon: Calendar },
+          { name: 'Advisor', icon: MessageSquare },
+          { name: 'Reminders', icon: Bell }
+        ].map(tab => (
+          <button
+            key={tab.name}
+            onClick={() => setActiveTab(tab.name.toLowerCase() as any)}
+            className={`flex flex-col items-center gap-1 py-2 px-3 rounded-2xl transition-all ${
+              activeTab === tab.name.toLowerCase()
+                ? 'bg-[#1B4332] text-white'
+                : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
+            }`}
+          >
+            <tab.icon size={20} />
+            <span className="text-[10px] font-black uppercase">{tab.name}</span>
+          </button>
+        ))}
+      </div>
 
       <main className="max-w-7xl mx-auto px-6 py-10">
         {activeTab === 'advisor' ? (
@@ -889,7 +864,7 @@ const App = () => {
             <div className="lg:col-span-4 space-y-6">
               <GlassCard className="h-[400px] flex flex-col items-center justify-center cursor-pointer border-4 border-dashed" onClick={() => fileInputRef.current?.click()}>
                 {image ? <img src={image} className="w-full h-full object-cover rounded-3xl" /> : <div className="text-center"><Camera size={48} className="mx-auto mb-4 text-slate-300" /><p className="font-bold text-slate-400">Capture sample</p></div>}
-                <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={(e) => { const file = e.target.files?.[0]; if (file) { const reader = new FileReader(); reader.onloadend = () => setImage(reader.result as string); reader.readAsDataURL(file); } }} />
+                <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={(e) => { const file = e.target.files?.[0]; if (file) { const reader = new FileReader(); reader.onloadend = () => setImage(reader.result as string); reader.readAsDataURL(file); }}} />
               </GlassCard>
               <Button className="w-full h-20 text-xl" disabled={!image || loading} onClick={() => getGeminiResponse(activeTab as 'soil' | 'crop')}>{loading ? <Loader2 className="animate-spin" /> : <Search />} {loading ? 'Scanning...' : 'Analyze Sample'}</Button>
             </div>

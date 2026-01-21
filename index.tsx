@@ -303,10 +303,12 @@ const CreativeAuthPage = ({ mode, onSwitch, onAuth }: { mode: 'login' | 'signup'
         }
         localStorage.setItem('farmwise_email', normalizedEmail);
         localStorage.setItem('farmwise_password', normalizedPassword);
-        onSwitch('login');
-        alert(`Account created! Your credentials:\nEmail: ${normalizedEmail}\nPassword: ${normalizedPassword}`);
+        alert(`Account created successfully!\n\nYour credentials:\nEmail: ${normalizedEmail}\nPassword: ${normalizedPassword}`);
+        // Clear form and switch to login
         setEmail('');
         setPassword('');
+        setError(null);
+        onSwitch('login');
       } else {
         // For login, check against saved credentials or default credentials
         const savedEmail = localStorage.getItem('farmwise_email') || 'user@farm.com';
@@ -314,9 +316,11 @@ const CreativeAuthPage = ({ mode, onSwitch, onAuth }: { mode: 'login' | 'signup'
 
         if (normalizedEmail === savedEmail && normalizedPassword === savedPassword) {
           console.log("Auth success, calling onAuth callback...");
+          setEmail('');
+          setPassword('');
           onAuth();
         } else {
-          setError(`Incorrect email or password. Use: ${savedEmail} / ${savedPassword}`);
+          setError(`Incorrect email or password.\nUse: ${savedEmail} / ${savedPassword}`);
         }
       }
     }, 1000);
@@ -440,13 +444,18 @@ const CreativeAuthPage = ({ mode, onSwitch, onAuth }: { mode: 'login' | 'signup'
           <h2 className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter">Start Growing</h2>
         </div>
         <GlassCard className="!p-10 shadow-2xl">
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-2xl flex items-center gap-3 animate-slide-up border border-red-100 dark:border-red-900/30">
+              <AlertCircle size={20} />
+              <p className="text-sm font-bold">{error}</p>
+            </div>
+          )}
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2"><label className="text-xs font-black uppercase text-slate-400">Full Name</label><div className="relative"><User className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" size={20} /><input type="text" required placeholder="John Farmer" className="w-full h-14 bg-white dark:bg-slate-900/50 border-2 border-slate-100 dark:border-white/10 rounded-2xl pl-14 font-bold outline-none focus:border-[#1B4332]" /></div></div>
-            <div className="space-y-2"><label className="text-xs font-black uppercase text-slate-400">Email Address</label><div className="relative"><Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" size={20} /><input type="email" required placeholder="name@farm.com" className="w-full h-14 bg-white dark:bg-slate-900/50 border-2 border-slate-100 dark:border-white/10 rounded-2xl pl-14 font-bold outline-none focus:border-[#1B4332]" /></div></div>
-            <div className="space-y-2"><label className="text-xs font-black uppercase text-slate-400">Password</label><div className="relative"><Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" size={20} /><input type="password" required placeholder="••••••••" className="w-full h-14 bg-white dark:bg-slate-900/50 border-2 border-slate-100 dark:border-white/10 rounded-2xl pl-14 font-bold outline-none focus:border-[#1B4332]" /></div></div>
+            <div className="space-y-2"><label className="text-xs font-black uppercase text-slate-400">Email Address</label><div className="relative"><Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" size={20} /><input type="email" required placeholder="name@farm.com" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full h-14 bg-white dark:bg-slate-900/50 border-2 border-slate-100 dark:border-white/10 rounded-2xl pl-14 font-bold outline-none focus:border-[#1B4332]" /></div></div>
+            <div className="space-y-2"><label className="text-xs font-black uppercase text-slate-400">Password</label><div className="relative"><Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" size={20} /><input type="password" required placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full h-14 bg-white dark:bg-slate-900/50 border-2 border-slate-100 dark:border-white/10 rounded-2xl pl-14 font-bold outline-none focus:border-[#1B4332]" /></div></div>
             <Button disabled={loading} className="w-full h-16">{loading ? <Loader2 className="animate-spin" /> : 'Create Account'}</Button>
           </form>
-          <div className="mt-8 text-center"><button onClick={() => onSwitch('login')} className="text-sm font-bold text-slate-400 hover:text-[#1B4332]">Already have an account? Sign In</button></div>
+          <div className="mt-8 text-center"><button onClick={() => { onSwitch('login'); setEmail(''); setPassword(''); setError(null); }} className="text-sm font-bold text-slate-400 hover:text-[#1B4332]">Already have an account? Sign In</button></div>
         </GlassCard>
       </div>
     </div>
